@@ -1,545 +1,153 @@
-/* ==========================================================================
-   THE MOFFATS – Core Interactive Engine
-   Header, Footer, Ken Burns Slider, Lightbox, FAQs, Filter & Floating Tools
-   ========================================================================== */
-
+/* Shared navigation and interactive behavior for The Moffats */
 (function () {
   'use strict';
 
-  // Agency Contact Details
-  const PHONE_PRIMARY = '0784751253';
-  const PHONE_PRIMARY_FORMATTED = '0784 751 253';
-  const PHONE_SECONDARY = '0740682321';
-  const PHONE_SECONDARY_FORMATTED = '0740 682 321';
-  const PHONE_INTL = '+254784751253';
-  const WA_NUM = '254784751253';
+  const PHONE = '0784 751 253';
+  const WA = '254784751253';
   const EMAIL = 'edjacradesigns@gmail.com';
-  const OFFICE_LOC = 'Nairobi, Kenya';
-
-  // Navigation Pages
   const pages = [
-    ['index.html', 'Home'],
-    ['about.html', 'About Us'],
-    ['services.html', 'Services & Jobs'],
-    ['process.html', 'How It Works'],
+    ['index.html', 'Home'], ['about.html', 'About Us'],
+    ['services.html', 'Services & Jobs'], ['process.html', 'How It Works'],
     ['contact.html', 'Contact Us']
   ];
+  const currentPage = location.pathname.split('/').pop() || 'index.html';
+  const phoneIcon = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.6 10.3c1.8 3.4 4.7 6.3 8.1 8.1l2.7-2.7c.3-.3.8-.4 1.2-.3 1.3.4 2.7.6 4.1.6.7 0 1.3.6 1.3 1.3v4c0 .7-.6 1.3-1.3 1.3C13.3 23 1 10.7 1 2.3c0-.7.6-1.3 1.3-1.3h4c.7 0 1.3.6 1.3 1.3 0 1.4.2 2.8.6 4.1.1.4 0 .9-.3 1.2L6.6 10.3z"/></svg>';
+  const emailIcon = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6.8A2.8 2.8 0 0 1 5.8 4h12.4A2.8 2.8 0 0 1 21 6.8v10.4A2.8 2.8 0 0 1 18.2 20H5.8A2.8 2.8 0 0 1 3 17.2V6.8zm2.2-.3 6.8 5.2 6.8-5.2H5.2z"/></svg>';
+  const locationIcon = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21.7c-.3 0-.5-.1-.7-.3l-6.6-6.5A7.5 7.5 0 1 1 19.3 14.9l-6.6 6.5c-.2.2-.4.3-.7.3zm0-15.8a5.3 5.3 0 0 0-5.3 5.3c0 4.6 5.3 9.5 5.3 9.5s5.3-4.9 5.3-9.5A5.3 5.3 0 0 0 12 5.9z"/></svg>';
 
-  // Current page detection
-  const curPage = location.pathname.split('/').pop() || 'index.html';
-
-  // Real SVG icon set for contact details instead of emoji
-  const contactIcons = {
-    phone: '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6.6 10.3c1.8 3.4 4.7 6.3 8.1 8.1l2.7-2.7c.3-.3.8-.4 1.2-.3 1.3.4 2.7.6 4.1.6.7 0 1.3.6 1.3 1.3v4c0 .7-.6 1.3-1.3 1.3C13.3 23 1 10.7 1 2.3c0-.7.6-1.3 1.3-1.3h4c.7 0 1.3.6 1.3 1.3 0 1.4.2 2.8.6 4.1.1.4 0 .9-.3 1.2L6.6 10.3z"/></svg>',
-    email: '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3 6.8A2.8 2.8 0 0 1 5.8 4h12.4A2.8 2.8 0 0 1 21 6.8v10.4A2.8 2.8 0 0 1 18.2 20H5.8A2.8 2.8 0 0 1 3 17.2V6.8zm2.2-.3 6.8 5.2 6.8-5.2H5.2zm14.1 1.7-7 5.3-7-5.3v9.2c0 .4.3.7.7.7h12.6c.4 0 .7-.3.7-.7V8.2z"/></svg>',
-    location: '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 21.7c-.3 0-.5-.1-.7-.3l-6.6-6.5A7.5 7.5 0 1 1 19.3 14.9l-6.6 6.5c-.2.2-.4.3-.7.3zm0-15.8a5.3 5.3 0 0 0-5.3 5.3c0 4.6 5.3 9.5 5.3 9.5s5.3-4.9 5.3-9.5A5.3 5.3 0 0 0 12 5.9zm0 7.1a1.8 1.8 0 1 1 0-3.6 1.8 1.8 0 0 1 0 3.6z"/></svg>'
-  };
-
-  const icons = {
-    tiktok: '<path d="M16.6 2h-3.2v13.2a2.9 2.9 0 1 1-2-2.8V9.1a6.1 6.1 0 1 0 5.2 6V8.6a7.4 7.4 0 0 0 4.3 1.4V6.8a4.3 4.3 0 0 1-4.3-4.8z"/>',
-    x: '<path d="M18.2 2h3.3l-7.2 8.2L22.8 22h-6.6l-5.2-6.8L5 22H1.7l7.7-8.8L1.2 2H8l4.7 6.2L18.2 2zm-1.2 18h1.8L7 3.9H5.1L17 20z"/>',
-    facebook: '<path d="M13.5 22v-8.2h2.8l.5-3.3h-3.3V8.4c0-.9.4-1.7 1.8-1.7h1.6V3.8S15.6 3.5 14.3 3.5c-2.7 0-4.3 1.6-4.3 4.5v2.5H7.2v3.3H10V22h3.5z"/>',
-    linkedin: '<path d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5zM3 9.8h4V21H3zM9.5 9.8h3.8v1.6h.1c.5-1 1.8-1.9 3.7-1.9 4 0 4.7 2.6 4.7 6V21h-4v-5c0-1.2 0-2.8-1.7-2.8s-2 1.3-2 2.7V21h-4z"/>',
-    instagram: '<path d="M12 7.2a4.8 4.8 0 1 0 0 9.6 4.8 4.8 0 0 0 0-9.6zm0 7.9a3.1 3.1 0 1 1 0-6.2 3.1 3.1 0 0 1 0 6.2zm5.2-9.6a1.1 1.1 0 1 0 0 2.2 1.1 1.1 0 0 0 0-2.2zM12 2.2c-3.2 0-3.6 0-4.8.1-1.3.1-2.2.3-2.9.7-.7.4-1.3 1-1.7 1.7-.4.7-.6 1.6-.7 2.9-.1 1.2-.1 1.6-.1 4.8s0 3.6.1 4.8c.1 1.3.3 2.2.7 2.9.4.7 1 1.3 1.7 1.7.7.4 1.6.6 2.9.7 1.2.1 1.6.1 4.8.1s3.6 0 4.8-.1c1.3-.1 2.2-.3 2.9-.7.7-.4 1.3-1 1.7-1.7.4-.7.6-1.6.7-2.9.1-1.2.1-1.6.1-4.8s0-3.6-.1-4.8c-.1-1.3-.3-2.2-.7-2.9-.4-.7-1-1.3-1.7-1.7-.7-.4-1.6-.6-2.9-.7-1.2-.1-1.6-.1-4.8-.1zm0 1.7c3.1 0 3.5 0 4.7.1 1.1.1 1.7.2 2.1.4.5.2.9.5 1.3.9.4.4.7.8.9 1.3.2.4.3 1 .4 2.1.1 1.2.1 1.6.1 4.7s0 3.5-.1 4.7c-.1 1.1-.2 1.7-.4 2.1-.2.5-.5.9-.9 1.3-.4.4-.8.7-1.3.9-.4.2-1 .3-2.1.4-1.2.1-1.6.1-4.7.1s-3.5 0-4.7-.1c-1.1-.1-1.7-.2-2.1-.4-.5-.2-.9-.5-1.3-.9-.4-.4-.7-.8-.9-1.3-.2-.4-.3-1-.4-2.1-.1-1.2-.1-1.6-.1-4.7s0-3.5.1-4.7c.1-1.1.2-1.7.4-2.1.2-.5.5-.9.9-1.3.4-.4.8-.7 1.3-.9.4-.2 1-.3 2.1-.4 1.2-.1 1.6-.1 4.7-.1z"/>'
-  };
-
-  const socials = [
-    ['TikTok', 'tiktok', 'https://www.velocetechcompany.com'],
-    ['X', 'x', 'https://www.schoolproke.com'],
-    ['Facebook', 'facebook', 'https://www.schoolproke.com'],
-    ['LinkedIn', 'linkedin', 'https://www.schoolproke.com'],
-    ['Instagram', 'instagram', 'https://www.schoolproke.com']
-  ];
-
-  /* --------------------------------------------------------------------------
-     1. RENDER SHARED HEADER
-     -------------------------------------------------------------------------- */
-  const headerElem = document.getElementById('site-header');
-  if (headerElem) {
-    const navItemsHtml = pages
-      .map(([url, title]) => `<li><a href="${url}" class="nav-link ${url === curPage ? 'active' : ''}">${title}</a></li>`)
-      .join('');
-
-    const mobileNavLinksHtml = pages
-      .map(([url, title]) => `<li><a href="${url}" class="${url === curPage ? 'active' : ''}">${title}</a></li>`)
-      .join('');
-
-    headerElem.innerHTML = `
-      <div class="topbar">
-        <div class="wrap">
-          <div class="topbar-badge">
-            <span class="pulse-dot"></span>
-            <span>Recruiting: Saudi Arabia, UAE, Qatar, Kuwait, Oman, Bahrain • Visit Visas (Canada, Schengen, Turkey) • VIP Security</span>
-          </div>
-          <div class="topbar-contact">
-            <a href="tel:+254784751253" aria-label="Call Office"><span class="icon-wrap">${contactIcons.phone}</span> <span>${PHONE_PRIMARY_FORMATTED} / ${PHONE_SECONDARY_FORMATTED}</span></a>
-            <a href="mailto:${EMAIL}" aria-label="Email Office"><span class="icon-wrap">${contactIcons.email}</span> <span>${EMAIL}</span></a>
-            <span class="location-wrap"><span class="icon-wrap">${contactIcons.location}</span> ${OFFICE_LOC}</span>
-          </div>
-        </div>
-      </div>
-      <header class="nav" id="main-nav">
-        <div class="wrap">
-          <a href="index.html" class="logo-link" aria-label="The Moffats Home">
-            <img src="images/moffats-logo.png" alt="The Moffats Logo" class="logo-img">
-          </a>
-          <ul class="nav-menu">
-            ${navItemsHtml}
-          </ul>
-          <div class="nav-actions">
-            <a class="btn btn-gold btn-sm" href="contact.html">Apply Now</a>
-            <button class="burger" id="burger-btn" aria-label="Toggle navigation menu" aria-expanded="false">
-              <span></span>
-              <span></span>
-              <span></span>
-            </button>
-          </div>
-        </div>
-      </header>
-
-      <!-- Mobile Navigation Drawer -->
-      <div class="mobile-overlay" id="mobile-overlay"></div>
-      <div class="mobile-drawer" id="mobile-drawer" aria-hidden="true">
-        <div>
-          <div class="mobile-drawer-header">
-            <img src="images/moffats-logo.png" alt="The Moffats" style="height:48px; width:auto;">
-            <button class="mobile-drawer-close" id="mobile-close-btn" aria-label="Close menu">&times;</button>
-          </div>
-          <ul class="mobile-nav-links">
-            ${mobileNavLinksHtml}
-          </ul>
-        </div>
-        <div class="mobile-drawer-footer">
-          <a class="btn btn-gold" href="contact.html">Apply for Jobs Abroad</a>
-          <a class="btn btn-green" href="https://wa.me/${WA_NUM}?text=Hello%20The%20Moffats%2C%20I%20am%20ready%20to%20apply%20for%20a%20job%20abroad." target="_blank" rel="noopener">
-            WhatsApp: ${PHONE_PRIMARY_FORMATTED}
-          </a>
-          <div style="font-size:0.85rem; color:var(--mute); text-align:center; margin-top:0.5rem;">
-            <span class="inline-icon">${contactIcons.phone}</span> Call: <a href="tel:+254784751253" style="font-weight:700; color:var(--green-900);">${PHONE_PRIMARY_FORMATTED}</a> &bull; <a href="tel:+254740682321" style="font-weight:700; color:var(--green-900);">${PHONE_SECONDARY_FORMATTED}</a>
-          </div>
-        </div>
-      </div>
-    `;
-
-    // Sticky nav scroll styling
+  const header = document.getElementById('site-header');
+  if (header) {
+    const nav = pages.map(([url, label]) => `<li><a href="${url}" class="nav-link ${url === currentPage ? 'active' : ''}">${label}</a></li>`).join('');
+    const mobileNav = pages.map(([url, label]) => `<li><a href="${url}" class="${url === currentPage ? 'active' : ''}">${label}</a></li>`).join('');
+    header.innerHTML = `
+      <div class="topbar"><div class="wrap">
+        <div class="topbar-badge"><span class="pulse-dot"></span><span>Recruiting across the Gulf • Visit visas • VIP security</span></div>
+        <div class="topbar-contact"><a href="tel:+254784751253"><span class="icon-wrap">${phoneIcon}</span><span>${PHONE}</span></a><a href="mailto:${EMAIL}"><span class="icon-wrap">${emailIcon}</span><span>${EMAIL}</span></a><span class="location-wrap"><span class="icon-wrap">${locationIcon}</span>Nairobi, Kenya</span></div>
+      </div></div>
+      <header class="nav" id="main-nav"><div class="wrap">
+        <a href="index.html" class="logo-link" aria-label="The Moffats home"><img src="images/moffats-logo.png" alt="The Moffats Logo" class="logo-img"></a>
+        <ul class="nav-menu">${nav}</ul><div class="nav-actions"><a class="btn btn-gold btn-sm" href="contact.html">Apply Now</a><button class="burger" id="burger-btn" type="button" aria-label="Toggle navigation menu" aria-expanded="false"><span></span><span></span><span></span></button></div>
+      </div></header>
+      <div class="mobile-overlay" id="mobile-overlay"></div><nav class="mobile-drawer" id="mobile-drawer" aria-hidden="true"><div>
+        <div class="mobile-drawer-header"><img src="images/moffats-logo.png" alt="The Moffats" style="height:48px;width:auto"><button class="mobile-drawer-close" id="mobile-close-btn" type="button" aria-label="Close menu">&times;</button></div>
+        <ul class="mobile-nav-links">${mobileNav}</ul></div><div class="mobile-drawer-footer"><a class="btn btn-gold" href="contact.html">Apply for Jobs Abroad</a><a class="btn btn-green" href="https://wa.me/${WA}?text=Hello%20The%20Moffats%2C%20I%20am%20ready%20to%20apply." target="_blank" rel="noopener">WhatsApp: ${PHONE}</a></div></nav>`;
     const mainNav = document.getElementById('main-nav');
-    window.addEventListener('scroll', () => {
-      if (window.scrollY > 20) {
-        mainNav.classList.add('scrolled');
-      } else {
-        mainNav.classList.remove('scrolled');
-      }
-    }, { passive: true });
-
-    // Mobile Drawer interactions
     const burger = document.getElementById('burger-btn');
     const drawer = document.getElementById('mobile-drawer');
     const overlay = document.getElementById('mobile-overlay');
-    const closeBtn = document.getElementById('mobile-close-btn');
-
-    function openMobileMenu() {
-      burger.classList.add('open');
-      burger.setAttribute('aria-expanded', 'true');
-      drawer.classList.add('open');
-      drawer.setAttribute('aria-hidden', 'false');
-      overlay.classList.add('active');
-      document.body.style.overflow = 'hidden';
-    }
-
-    function closeMobileMenu() {
-      burger.classList.remove('open');
-      burger.setAttribute('aria-expanded', 'false');
-      drawer.classList.remove('open');
-      drawer.setAttribute('aria-hidden', 'true');
-      overlay.classList.remove('active');
-      document.body.style.overflow = '';
-    }
-
-    if (burger) burger.addEventListener('click', () => {
-      if (drawer.classList.contains('open')) closeMobileMenu();
-      else openMobileMenu();
+    const close = document.getElementById('mobile-close-btn');
+    const closeMenu = () => {
+      burger?.classList.remove('open'); burger?.setAttribute('aria-expanded', 'false');
+      drawer?.classList.remove('open'); drawer?.setAttribute('aria-hidden', 'true');
+      overlay?.classList.remove('active'); document.body.style.overflow = '';
+    };
+    burger?.addEventListener('click', () => {
+      const opening = !drawer.classList.contains('open');
+      drawer.classList.toggle('open', opening); burger.classList.toggle('open', opening);
+      burger.setAttribute('aria-expanded', String(opening)); drawer.setAttribute('aria-hidden', String(!opening));
+      overlay.classList.toggle('active', opening); document.body.style.overflow = opening ? 'hidden' : '';
     });
-
-    if (closeBtn) closeBtn.addEventListener('click', closeMobileMenu);
-    if (overlay) overlay.addEventListener('click', closeMobileMenu);
-
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && drawer && drawer.classList.contains('open')) {
-        closeMobileMenu();
-      }
-    });
+    close?.addEventListener('click', closeMenu); overlay?.addEventListener('click', closeMenu);
+    window.addEventListener('scroll', () => mainNav?.classList.toggle('scrolled', window.scrollY > 20), { passive: true });
+    document.addEventListener('keydown', event => { if (event.key === 'Escape') closeMenu(); });
   }
 
-  /* --------------------------------------------------------------------------
-     2. RENDER SHARED FOOTER
-     -------------------------------------------------------------------------- */
-  const footerElem = document.getElementById('site-footer');
-  if (footerElem) {
-    const socialLinksHtml = socials
-      .map(([name, key, url]) => `
-        <a href="${url}" target="_blank" rel="noopener" aria-label="${name}">
-          <svg viewBox="0 0 24 24">${icons[key]}</svg>
-        </a>
-      `)
-      .join('');
+  const footer = document.getElementById('site-footer');
+  if (footer) {
+    footer.innerHTML = `<footer><div class="wrap"><div class="fgrid">
+      <div><a class="flogo" href="index.html"><img src="images/moffats-logo.png" alt="The Moffats"></a><p class="footer-desc">The Moffats connects candidates with employers and provides recruitment, travel, and support services.</p></div>
+      <div><h4>Quick Links</h4><ul>${pages.map(([url, label]) => `<li><a href="${url}">${label}</a></li>`).join('')}<li><a href="privacy-policy.html">Privacy Policy</a></li><li><a href="terms-and-conditions.html">Terms &amp; Conditions</a></li></ul></div>
+      <div><h4>Services</h4><ul><li><a href="services.html">Overseas Recruitment</a></li><li><a href="services.html">Visit Visa Support</a></li><li><a href="services.html">Travel Services</a></li><li><a href="services.html">Executive Services</a></li></ul></div>
+      <div><h4>Nairobi Office</h4><ul><li><span class="inline-icon">${locationIcon}</span> Nairobi, Kenya</li><li><a href="tel:+254784751253"><span class="inline-icon">${phoneIcon}</span> ${PHONE}</a></li><li><a href="tel:+254740682321">0740 682 321</a></li><li><a href="mailto:${EMAIL}"><span class="inline-icon">${emailIcon}</span> ${EMAIL}</a></li><li><a href="https://wa.me/${WA}" target="_blank" rel="noopener">WhatsApp Helpline</a></li></ul></div>
+      </div><div class="footer-bottom"><div>&copy; ${new Date().getFullYear()} The Moffats Recruitment &amp; Travel Agency. All rights reserved.</div><div>Powered by <a href="https://www.velocetechcompany.com" target="_blank" rel="noopener">Veloce Tech Company</a></div></div></div></footer>
+      <div class="floating-tools"><button class="back-to-top" id="back-to-top-btn" type="button" aria-label="Back to top"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="18 15 12 9 6 15"></polyline></svg></button><a class="wa-btn" href="https://wa.me/${WA}" target="_blank" rel="noopener" aria-label="Chat on WhatsApp"><span class="wa-btn-pulse"></span><span>WhatsApp</span></a></div>
+      <div class="lightbox-modal" id="site-lightbox" role="dialog" aria-modal="true" aria-label="Image preview"><div class="lightbox-box"><button class="lightbox-close" id="lightbox-close-btn" type="button" aria-label="Close preview">&times;</button><img src="" alt="" class="lightbox-img" id="lightbox-img"><div class="lightbox-caption" id="lightbox-caption"></div><div style="margin-top:1.25rem"><a class="btn btn-gold btn-sm" id="lightbox-apply-link" href="contact.html">Apply for this vacancy</a></div></div></div>`;
+    const topButton = document.getElementById('back-to-top-btn');
+    window.addEventListener('scroll', () => topButton?.classList.toggle('visible', window.scrollY > 350), { passive: true });
+    topButton?.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+  }
 
-    footerElem.innerHTML = `
-      <footer>
-        <div class="wrap">
-          <div class="fgrid">
-            <div>
-              <a class="flogo" href="index.html" aria-label="The Moffats">
-                <img src="images/moffats-logo.png" alt="The Moffats">
-              </a>
-              <p class="footer-desc">
-                Nairobi’s premier recruitment &amp; executive agency connecting qualified workers with trusted employers across Saudi Arabia, UAE, Qatar, Kuwait, Oman, Bahrain, Iraq, and Lebanon. Providing specialist VIP protection, vehicle hire, bodyguards, air ticketing, hotel reservations, and Canada, Schengen &amp; Turkiye visit visas.
-              </p>
-              <div class="social">
-                ${socialLinksHtml}
-              </div>
-            </div>
-
-            <div>
-              <h4>Quick Links</h4>
-              <ul>
-                ${pages.map(([url, title]) => `<li><a href="${url}">${title}</a></li>`).join('')}
-                <li><a href="privacy-policy.html">Privacy Policy</a></li>
-                <li><a href="terms-and-conditions.html">Terms &amp; Conditions</a></li>
-              </ul>
-            </div>
-
-            <div>
-              <h4>Specializations</h4>
-              <ul>
-                <li><a href="services.html">VIP Security &amp; Bodyguards</a></li>
-                <li><a href="services.html">Tourist Protection &amp; Car Hire</a></li>
-                <li><a href="services.html">Air Ticketing &amp; Hotel Bookings</a></li>
-                <li><a href="services.html">Canada &amp; Schengen Visit Visas</a></li>
-                <li><a href="services.html">Caregivers &amp; Housemaids</a></li>
-                <li><a href="services.html">Warehouse Helpers &amp; Cleaners</a></li>
-              </ul>
-            </div>
-
-            <div>
-              <h4>Nairobi Office</h4>
-              <ul>
-                <li><span class="inline-icon">${contactIcons.location}</span> Nairobi, Kenya</li>
-                <li><a href="tel:+254784751253"><span class="inline-icon">${contactIcons.phone}</span> ${PHONE_PRIMARY_FORMATTED}</a></li>
-                <li><a href="tel:+254740682321"><span class="inline-icon">${contactIcons.phone}</span> ${PHONE_SECONDARY_FORMATTED}</a></li>
-                <li><a href="mailto:${EMAIL}"><span class="inline-icon">${contactIcons.email}</span> ${EMAIL}</a></li>
-                <li>
-                  <a href="https://wa.me/${WA_NUM}?text=Hello%20The%20Moffats%2C%20I%20have%20an%20inquiry." target="_blank" rel="noopener" style="color:var(--gold-300); font-weight:700;">
-                    WhatsApp Helpline
-                  </a>
-                </li>
-                <li style="margin-top:1rem; font-size:0.85rem; color:#8ea79a;">
-                  Mon – Fri: 8:00 AM – 5:30 PM<br>
-                  Sat: 9:00 AM – 2:00 PM
-                </li>
-              </ul>
-            </div>
-          </div>
-
-          <div class="footer-bottom">
-            <div>&copy; ${new Date().getFullYear()} The Moffats Recruitment &amp; Travel Agency. All rights reserved.</div>
-            <div>Powered by <a href="https://www.velocetechcompany.com" target="_blank" rel="noopener">Veloce Tech Company</a></div>
-          </div>
-        </div>
-      </footer>
-
-      <!-- Floating Action Widgets -->
-      <div class="floating-tools">
-        <button class="back-to-top" id="back-to-top-btn" aria-label="Back to top">
-          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="18 15 12 9 6 15"></polyline>
-          </svg>
-        </button>
-
-        <a class="wa-btn" href="https://wa.me/${WA_NUM}?text=Hello%20The%20Moffats%2C%20I%20would%20like%20to%20inquire%20about%20your%20services." target="_blank" rel="noopener" aria-label="Chat on WhatsApp">
-          <span class="wa-btn-pulse"></span>
-          <svg viewBox="0 0 24 24">
-            <path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2c-1.5 0-2.9-.4-4.1-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6 0l-.3.2c-.2.2-.6.7-.8.8-.2.1-.4.1-.7-.1-.9-.4-1.7-1-2.2-1.7-.2-.3-.4-.4-.7-.4H9c-.3 0-.7.1-.9.4-.4.4-.8 1-.8 1.7s.8 2 1 2.2c.2.4 2.2 3.5 5.4 4.8.8.4 1.5.6 2 .7.8.2 1.6.1 2.2-.1.5-.2 1.5-.7 1.7-1.4.2-.7.2-1.3.2-1.4-.1-.1-.3-.2-.5-.3z"/>
-          </svg>
-          <span>WhatsApp</span>
-        </a>
-      </div>
-
-      <!-- Shared Lightbox Modal for Posters -->
-      <div class="lightbox-modal" id="site-lightbox" role="dialog" aria-modal="true" aria-label="Image preview">
-        <div class="lightbox-box">
-          <button class="lightbox-close" id="lightbox-close-btn" aria-label="Close preview">&times;</button>
-          <img src="" alt="" class="lightbox-img" id="lightbox-img">
-          <div class="lightbox-caption" id="lightbox-caption"></div>
-          <div style="margin-top:1.25rem;">
-            <a class="btn btn-gold btn-sm" id="lightbox-apply-link" href="contact.html">Apply for This Vacancy</a>
-          </div>
-        </div>
-      </div>
-    `;
-
-    // Back to top behavior
-    const backToTopBtn = document.getElementById('back-to-top-btn');
-    window.addEventListener('scroll', () => {
-      if (window.scrollY > 350) {
-        backToTopBtn.classList.add('visible');
-      } else {
-        backToTopBtn.classList.remove('visible');
-      }
-    }, { passive: true });
-
-    if (backToTopBtn) {
-      backToTopBtn.addEventListener('click', () => {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      });
+  // Homepage background slider.
+  const track = document.getElementById('hero-slider-track');
+  if (track) {
+    const slides = [...track.querySelectorAll('.hero-slide')];
+    const nav = document.getElementById('hero-slider-nav');
+    const caption = document.getElementById('hero-slide-caption');
+    const captions = ['✈️ Direct flights from Nairobi to Doha & Muscat','🏙️ Verified placements with trusted employers','📄 Safe, documented processing and legal work visas','🤝 Dedicated care from application to arrival'];
+    if (slides.length) {
+      let current = 0;
+      if (nav) nav.innerHTML = slides.map((_, i) => `<button type="button" aria-label="Slide ${i + 1}" class="${i === 0 ? 'active' : ''}"></button>`).join('');
+      const buttons = nav ? [...nav.querySelectorAll('button')] : [];
+      const show = index => {
+        current = index; slides.forEach((slide, i) => slide.classList.toggle('active', i === index));
+        buttons.forEach((button, i) => button.classList.toggle('active', i === index));
+        if (caption && captions[index]) caption.textContent = captions[index];
+      };
+      buttons.forEach((button, i) => button.addEventListener('click', () => { show(i); restart(); }));
+      let timer = setInterval(() => show((current + 1) % slides.length), 6500);
+      function restart() { clearInterval(timer); timer = setInterval(() => show((current + 1) % slides.length), 6500); }
+      show(0);
     }
   }
 
-  /* --------------------------------------------------------------------------
-     3. KEN BURNS ROTATING BACKGROUND SLIDER (Homepage Hero)
-     -------------------------------------------------------------------------- */
-  const heroSliderTrack = document.getElementById('hero-slider-track');
-  if (heroSliderTrack) {
-    const slides = heroSliderTrack.querySelectorAll('.hero-slide');
-    const navContainer = document.getElementById('hero-slider-nav');
-    const captionElem = document.getElementById('hero-slide-caption');
-
-    const captions = [
-      '✈️ Direct Departure Flights from Nairobi to Doha & Muscat',
-      '🏙️ Verified Placements with Top Employers in Qatar & Oman',
-      '📄 Safe, Documented Processing & Legal Work Visas',
-      '🤝 Dedicated Care: From Nairobi Application to Touchdown'
-    ];
-
-    let currentSlide = 0;
-    let slideInterval = null;
-    const slideDuration = 6500;
-
-    // Build indicator dots if container exists
-    if (navContainer && slides.length > 0) {
-      navContainer.innerHTML = slides.map((_, idx) => `
-        <button type="button" class="${idx === 0 ? 'active' : ''}" data-slide="${idx}" aria-label="Slide ${idx + 1}"></button>
-      `).join('');
-
-      const buttons = navContainer.querySelectorAll('button');
-      buttons.forEach((btn, idx) => {
-        btn.addEventListener('click', () => {
-          goToSlide(idx);
-          resetInterval();
-        });
-      });
-    }
-
-    function updateCaption(idx) {
-      if (captionElem && captions[idx]) {
-        captionElem.innerHTML = captions[idx];
-      }
-    }
-
-    function goToSlide(idx) {
-      if (!slides[idx]) return;
-      slides.forEach((s) => s.classList.remove('active'));
-      slides[idx].classList.add('active');
-      currentSlide = idx;
-
-      if (navContainer) {
-        const buttons = navContainer.querySelectorAll('button');
-        buttons.forEach((b, i) => b.classList.toggle('active', i === idx));
-      }
-
-      updateCaption(idx);
-    }
-
-    function nextSlide() {
-      const next = (currentSlide + 1) % slides.length;
-      goToSlide(next);
-    }
-
-    function resetInterval() {
-      if (slideInterval) clearInterval(slideInterval);
-      slideInterval = setInterval(nextSlide, slideDuration);
-    }
-
-    // Initialize first slide and start timer
-    goToSlide(0);
-    resetInterval();
-  }
-
-  /* --------------------------------------------------------------------------
-     4. LIGHTBOX PREVIEW CONTROLLER
-     -------------------------------------------------------------------------- */
+  // Accessible image lightbox.
   const lightbox = document.getElementById('site-lightbox');
-  const lightboxImg = document.getElementById('lightbox-img');
-  const lightboxCaption = document.getElementById('lightbox-caption');
-  const lightboxClose = document.getElementById('lightbox-close-btn');
-  const lightboxApply = document.getElementById('lightbox-apply-link');
+  const lightboxImage = document.getElementById('lightbox-img');
+  const closeLightbox = () => { lightbox?.classList.remove('active'); document.body.style.overflow = ''; };
+  document.querySelectorAll('[data-lightbox], .flyer-item, .jobs img').forEach(item => item.addEventListener('click', () => {
+    const image = item.matches('img') ? item : item.querySelector('img');
+    if (!image || !lightbox || !lightboxImage) return;
+    const title = item.getAttribute('data-title') || image.alt || 'Official recruitment announcement';
+    lightboxImage.src = image.src; lightboxImage.alt = image.alt || title;
+    const caption = document.getElementById('lightbox-caption'); if (caption) caption.textContent = title;
+    const apply = document.getElementById('lightbox-apply-link');
+    if (apply) { apply.href = `https://wa.me/${WA}?text=${encodeURIComponent(`Hello The Moffats, I am inquiring about: ${title}`)}`; apply.target = '_blank'; apply.rel = 'noopener'; apply.textContent = 'Apply via WhatsApp'; }
+    lightbox.classList.add('active'); document.body.style.overflow = 'hidden';
+  }));
+  document.getElementById('lightbox-close-btn')?.addEventListener('click', closeLightbox);
+  lightbox?.addEventListener('click', event => { if (event.target === lightbox) closeLightbox(); });
 
-  function openLightbox(src, alt, caption) {
-    if (!lightbox || !lightboxImg) return;
-    lightboxImg.src = src;
-    lightboxImg.alt = alt || 'Official recruitment announcement';
-    if (lightboxCaption) lightboxCaption.textContent = caption || alt || 'Official Recruitment Notice';
-    if (lightboxApply) {
-      const encodedMsg = encodeURIComponent(`Hello The Moffats, I am inquiring about the vacancy: ${alt || 'Advertised Role'}`);
-      lightboxApply.href = `https://wa.me/${WA_NUM}?text=${encodedMsg}`;
-      lightboxApply.textContent = 'Apply via WhatsApp';
-      lightboxApply.target = '_blank';
-      lightboxApply.rel = 'noopener';
-    }
-    lightbox.classList.add('active');
-    document.body.style.overflow = 'hidden';
-  }
-
-  function closeLightbox() {
-    if (!lightbox) return;
-    lightbox.classList.remove('active');
-    document.body.style.overflow = '';
-  }
-
-  if (lightboxClose) lightboxClose.addEventListener('click', closeLightbox);
-  if (lightbox) {
-    lightbox.addEventListener('click', (e) => {
-      if (e.target === lightbox) closeLightbox();
-    });
-  }
-
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && lightbox && lightbox.classList.contains('active')) {
-      closeLightbox();
-    }
-  });
-
-  // Attach lightbox to all flyer elements and job flyer images
-  document.querySelectorAll('[data-lightbox], .flyer-item, .jobs img').forEach((item) => {
-    item.addEventListener('click', function () {
-      const img = this.tagName === 'IMG' ? this : this.querySelector('img');
-      if (img) {
-        const title = this.getAttribute('data-title') || img.alt || 'Official Qatar Opening';
-        openLightbox(img.src, img.alt, title);
-      }
-    });
-  });
-
-  /* --------------------------------------------------------------------------
-     5. FAQ ACCORDION CONTROLLER (Tap / Click to Reveal Answer)
-     -------------------------------------------------------------------------- */
-  function toggleFaqItem(element) {
-    if (!element) return;
-    const item = element.classList.contains('faq-item') ? element : element.closest('.faq-item');
-    if (!item) return;
-
+  // One handler supports both inline onclick attributes and dynamically inserted questions.
+  function toggleFaq(button) {
+    const item = button?.closest('.faq-item'); if (!item) return;
     const isOpen = item.classList.contains('open');
+    const list = item.closest('.faq-list');
+    list?.querySelectorAll('.faq-item.open').forEach(openItem => {
+      if (openItem !== item) { openItem.classList.remove('open'); openItem.querySelector('.faq-question')?.setAttribute('aria-expanded', 'false'); openItem.querySelector('.faq-answer')?.style.removeProperty('max-height'); }
+    });
+    item.classList.toggle('open', !isOpen);
+    button.setAttribute('aria-expanded', String(!isOpen));
     const answer = item.querySelector('.faq-answer');
-    const button = item.querySelector('.faq-question');
-    const container = item.closest('.faq-list') || item.parentElement;
-
-    if (container) {
-      container.querySelectorAll('.faq-item.open').forEach((openItem) => {
-        if (openItem !== item) {
-          openItem.classList.remove('open');
-          const ans = openItem.querySelector('.faq-answer');
-          if (ans) ans.style.maxHeight = null;
-          const qBtn = openItem.querySelector('.faq-question');
-          if (qBtn) qBtn.setAttribute('aria-expanded', 'false');
-        }
-      });
-    }
-
-    if (isOpen) {
-      item.classList.remove('open');
-      if (button) button.setAttribute('aria-expanded', 'false');
-      if (answer) answer.style.maxHeight = null;
-    } else {
-      item.classList.add('open');
-      if (button) button.setAttribute('aria-expanded', 'true');
-      if (answer) {
-        const targetHeight = Math.max(answer.scrollHeight + 40, 220);
-        answer.style.maxHeight = `${targetHeight}px`;
-      }
-    }
+    if (answer) answer.style.maxHeight = isOpen ? '' : `${answer.scrollHeight + 40}px`;
+    // Inline handlers run before the listener below; mark this click to prevent a second toggle.
+    button.dataset.faqHandledInline = 'true';
   }
+  window.toggleFaq = toggleFaq;
+  document.querySelectorAll('.faq-question').forEach(button => button.addEventListener('click', event => {
+    if (button.dataset.faqHandledInline === 'true') { delete button.dataset.faqHandledInline; return; }
+    event.preventDefault(); toggleFaq(button);
+  }));
+  document.addEventListener('keydown', event => { if (event.key === 'Escape') { closeLightbox(); document.querySelectorAll('.mobile-drawer.open').forEach(drawer => { drawer.classList.remove('open'); drawer.setAttribute('aria-hidden', 'true'); document.querySelector('.burger')?.setAttribute('aria-expanded', 'false'); document.querySelector('.mobile-overlay')?.classList.remove('active'); document.body.style.overflow = ''; }); } });
 
-  window.toggleFaq = function (el) {
-    toggleFaqItem(el);
-  };
+  // Services/job category filtering.
+  const filterButtons = [...document.querySelectorAll('.filter-tabs .tab-btn')];
+  const cards = [...document.querySelectorAll('.job-card[data-category]')];
+  filterButtons.forEach(button => button.addEventListener('click', () => {
+    filterButtons.forEach(item => item.classList.toggle('active', item === button));
+    const filter = button.dataset.filter || 'all';
+    cards.forEach(card => { const categories = (card.dataset.category || '').split(/\s+/); card.style.display = filter === 'all' || categories.includes(filter) ? '' : 'none'; });
+  }));
 
-  document.querySelectorAll('.faq-question').forEach((button) => {
-    button.addEventListener('click', function (e) {
-      e.preventDefault();
-      toggleFaqItem(this);
-    });
-  });
-
-  /* --------------------------------------------------------------------------
-     6. JOB CATEGORY FILTER CONTROLLER
-     -------------------------------------------------------------------------- */
-  const filterButtons = document.querySelectorAll('.filter-tabs .tab-btn');
-  const filterCards = document.querySelectorAll('.job-card[data-category]');
-
-  if (filterButtons.length > 0 && filterCards.length > 0) {
-    filterButtons.forEach((btn) => {
-      btn.addEventListener('click', () => {
-        filterButtons.forEach((b) => b.classList.remove('active'));
-        btn.classList.add('active');
-
-        const filter = btn.getAttribute('data-filter') || 'all';
-
-        filterCards.forEach((card) => {
-          const category = card.getAttribute('data-category') || '';
-          const categoryList = category.split(/\s+/);
-          if (filter === 'all' || category === filter || categoryList.includes(filter)) {
-            card.style.display = 'flex';
-            card.style.animation = 'fadeIn 0.3s ease-out';
-          } else {
-            card.style.display = 'none';
-          }
-        });
-      });
+  // Optional WhatsApp shortcut on the contact page.
+  const form = document.querySelector('form[action*="formsubmit.co"]');
+  const submit = form?.querySelector('button[type="submit"]');
+  if (form && submit && !document.getElementById('wa-quick-send')) {
+    const button = document.createElement('button'); button.type = 'button'; button.id = 'wa-quick-send'; button.className = 'btn btn-gold'; button.style.cssText = 'width:100%;justify-content:center'; button.textContent = 'WhatsApp Direct Application';
+    const wrapper = document.createElement('div'); wrapper.style.marginTop = '.5rem'; wrapper.append(button); submit.insertAdjacentElement('afterend', wrapper);
+    button.addEventListener('click', () => {
+      const value = id => document.getElementById(id)?.value.trim() || '';
+      const text = ['Hello The Moffats, I would like to apply for an overseas placement.', value('n') && `Name: ${value('n')}`, value('p') && `Phone: ${value('p')}`, `Role: ${value('j')}`, `Preferred country: ${value('c')}`, value('m') && `Note: ${value('m')}`].filter(Boolean).join('\n');
+      window.open(`https://wa.me/${WA}?text=${encodeURIComponent(text)}`, '_blank', 'noopener');
     });
   }
-
-  /* --------------------------------------------------------------------------
-     7. CONTACT FORM WHATSAPP QUICK ACTION
-     -------------------------------------------------------------------------- */
-  const contactForm = document.querySelector('form[action*="formsubmit.co"]');
-  if (contactForm) {
-    const sendBtn = contactForm.querySelector('button[type="submit"]');
-    if (sendBtn && !document.getElementById('wa-quick-send')) {
-      const waActionDiv = document.createElement('div');
-      waActionDiv.style.marginTop = '0.5rem';
-      waActionDiv.innerHTML = `
-        <button type="button" id="wa-quick-send" class="btn btn-gold" style="width:100%; justify-content:center;">
-          WhatsApp Direct Application
-        </button>
-      `;
-      sendBtn.insertAdjacentElement('afterend', waActionDiv);
-
-      const waQuickBtn = document.getElementById('wa-quick-send');
-      if (waQuickBtn) {
-        waQuickBtn.addEventListener('click', () => {
-          const nameInput = document.getElementById('n');
-          const phoneInput = document.getElementById('p');
-          const roleSelect = document.getElementById('j');
-          const countrySelect = document.getElementById('c');
-          const msgInput = document.getElementById('m');
-
-          const name = nameInput ? nameInput.value.trim() : '';
-          const phone = phoneInput ? phoneInput.value.trim() : '';
-          const role = roleSelect ? roleSelect.value : 'General Inquiry';
-          const country = countrySelect ? countrySelect.value : 'Qatar / Oman';
-          const msg = msgInput ? msgInput.value.trim() : '';
-
-          let waText = `Hello The Moffats, I would like to apply for an overseas placement.\n`;
-          if (name) waText += `• Name: ${name}\n`;
-          if (phone) waText += `• Phone: ${phone}\n`;
-          waText += `• Role: ${role}\n`;
-          waText += `• Preferred Country: ${country}\n`;
-          if (msg) waText += `• Note: ${msg}\n`;
-
-          const waUrl = `https://wa.me/${WA_NUM}?text=${encodeURIComponent(waText)}`;
-          window.open(waUrl, '_blank', 'noopener');
-        });
-      }
-    }
-  }
-
 })();
