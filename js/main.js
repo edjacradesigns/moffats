@@ -7,12 +7,12 @@
   'use strict';
 
   // Agency Contact Details
-  const PHONE_PRIMARY = '0727557784';
-  const PHONE_PRIMARY_FORMATTED = '0727 557 784';
+  const PHONE_PRIMARY = '0784751253';
+  const PHONE_PRIMARY_FORMATTED = '0784 751 253';
   const PHONE_SECONDARY = '0740682321';
   const PHONE_SECONDARY_FORMATTED = '0740 682 321';
-  const PHONE_INTL = '+254727557784';
-  const WA_NUM = '254727557784';
+  const PHONE_INTL = '+254784751253';
+  const WA_NUM = '254784751253';
   const EMAIL = 'edjacradesigns@gmail.com';
   const OFFICE_LOC = 'Nairobi, Kenya';
 
@@ -28,13 +28,19 @@
   // Current page detection
   const curPage = location.pathname.split('/').pop() || 'index.html';
 
-  // Social Media SVG Icons
+  // Real SVG icon set for contact details instead of emoji
+  const contactIcons = {
+    phone: '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6.6 10.3c1.8 3.4 4.7 6.3 8.1 8.1l2.7-2.7c.3-.3.8-.4 1.2-.3 1.3.4 2.7.6 4.1.6.7 0 1.3.6 1.3 1.3v4c0 .7-.6 1.3-1.3 1.3C13.3 23 1 10.7 1 2.3c0-.7.6-1.3 1.3-1.3h4c.7 0 1.3.6 1.3 1.3 0 1.4.2 2.8.6 4.1.1.4 0 .9-.3 1.2L6.6 10.3z"/></svg>',
+    email: '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3 6.8A2.8 2.8 0 0 1 5.8 4h12.4A2.8 2.8 0 0 1 21 6.8v10.4A2.8 2.8 0 0 1 18.2 20H5.8A2.8 2.8 0 0 1 3 17.2V6.8zm2.2-.3 6.8 5.2 6.8-5.2H5.2zm14.1 1.7-7 5.3-7-5.3v9.2c0 .4.3.7.7.7h12.6c.4 0 .7-.3.7-.7V8.2z"/></svg>',
+    location: '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 21.7c-.3 0-.5-.1-.7-.3l-6.6-6.5A7.5 7.5 0 1 1 19.3 14.9l-6.6 6.5c-.2.2-.4.3-.7.3zm0-15.8a5.3 5.3 0 0 0-5.3 5.3c0 4.6 5.3 9.5 5.3 9.5s5.3-4.9 5.3-9.5A5.3 5.3 0 0 0 12 5.9zm0 7.1a1.8 1.8 0 1 1 0-3.6 1.8 1.8 0 0 1 0 3.6z"/></svg>'
+  };
+
   const icons = {
     tiktok: '<path d="M16.6 2h-3.2v13.2a2.9 2.9 0 1 1-2-2.8V9.1a6.1 6.1 0 1 0 5.2 6V8.6a7.4 7.4 0 0 0 4.3 1.4V6.8a4.3 4.3 0 0 1-4.3-4.8z"/>',
     x: '<path d="M18.2 2h3.3l-7.2 8.2L22.8 22h-6.6l-5.2-6.8L5 22H1.7l7.7-8.8L1.2 2H8l4.7 6.2L18.2 2zm-1.2 18h1.8L7 3.9H5.1L17 20z"/>',
     facebook: '<path d="M13.5 22v-8.2h2.8l.5-3.3h-3.3V8.4c0-.9.4-1.7 1.8-1.7h1.6V3.8S15.6 3.5 14.3 3.5c-2.7 0-4.3 1.6-4.3 4.5v2.5H7.2v3.3H10V22h3.5z"/>',
     linkedin: '<path d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5zM3 9.8h4V21H3zM9.5 9.8h3.8v1.6h.1c.5-1 1.8-1.9 3.7-1.9 4 0 4.7 2.6 4.7 6V21h-4v-5c0-1.2 0-2.8-1.7-2.8s-2 1.3-2 2.7V21h-4z"/>',
-    instagram: '<path d="M12 7.2a4.8 4.8 0 1 0 0 9.6 4.8 4.8 0 0 0 0-9.6zm0 7.9a3.1 3.1 0 1 1 0-6.2 3.1 3.1 0 0 1 0 6.2zm5.2-9.6a1.1 1.1 0 1 0 0 2.2 1.1 1.1 0 0 0 0-2.2zM12 2.2c-3.2 0-3.6 0-4.8.1-3.3.1-4.9 1.7-5 5-.1 1.2-.1 1.6-.1 4.7s0 3.5.1 4.8c.1 3.3 1.7 4.9 5 5 1.2.1 1.6.1 4.8.1s3.5 0 4.8-.1c3.3-.1 4.9-1.7 5-5 .1-1.2.1-1.6.1-4.8s0-3.5-.1-4.8c-.1-3.3-1.7-4.9-5-5-1.3-.1-1.6-.1-4.8-.1zm0 1.8c3.1 0 3.5 0 4.7.1 2.4.1 3.5 1.2 3.6 3.6.1 1.2.1 1.6.1 4.7s0 3.5-.1 4.7c-.1 2.4-1.2 3.5-3.6 3.6-1.2.1-1.6.1-4.7.1s-3.5 0-4.7-.1c-2.4-.1-3.5-1.2-3.6-3.6C3.6 15.5 3.6 15.1 3.6 12s0-3.5.1-4.7C3.8 4.9 4.9 3.8 7.3 3.7c1.2-.1 1.6-.1 4.7-.1z"/>'
+    instagram: '<path d="M12 7.2a4.8 4.8 0 1 0 0 9.6 4.8 4.8 0 0 0 0-9.6zm0 7.9a3.1 3.1 0 1 1 0-6.2 3.1 3.1 0 0 1 0 6.2zm5.2-9.6a1.1 1.1 0 1 0 0 2.2 1.1 1.1 0 0 0 0-2.2zM12 2.2c-3.2 0-3.6 0-4.8.1-1.3.1-2.2.3-2.9.7-.7.4-1.3 1-1.7 1.7-.4.7-.6 1.6-.7 2.9-.1 1.2-.1 1.6-.1 4.8s0 3.6.1 4.8c.1 1.3.3 2.2.7 2.9.4.7 1 1.3 1.7 1.7.7.4 1.6.6 2.9.7 1.2.1 1.6.1 4.8.1s3.6 0 4.8-.1c1.3-.1 2.2-.3 2.9-.7.7-.4 1.3-1 1.7-1.7.4-.7.6-1.6.7-2.9.1-1.2.1-1.6.1-4.8s0-3.6-.1-4.8c-.1-1.3-.3-2.2-.7-2.9-.4-.7-1-1.3-1.7-1.7-.7-.4-1.6-.6-2.9-.7-1.2-.1-1.6-.1-4.8-.1zm0 1.7c3.1 0 3.5 0 4.7.1 1.1.1 1.7.2 2.1.4.5.2.9.5 1.3.9.4.4.7.8.9 1.3.2.4.3 1 .4 2.1.1 1.2.1 1.6.1 4.7s0 3.5-.1 4.7c-.1 1.1-.2 1.7-.4 2.1-.2.5-.5.9-.9 1.3-.4.4-.8.7-1.3.9-.4.2-1 .3-2.1.4-1.2.1-1.6.1-4.7.1s-3.5 0-4.7-.1c-1.1-.1-1.7-.2-2.1-.4-.5-.2-.9-.5-1.3-.9-.4-.4-.7-.8-.9-1.3-.2-.4-.3-1-.4-2.1-.1-1.2-.1-1.6-.1-4.7s0-3.5.1-4.7c.1-1.1.2-1.7.4-2.1.2-.5.5-.9.9-1.3.4-.4.8-.7 1.3-.9.4-.2 1-.3 2.1-.4 1.2-.1 1.6-.1 4.7-.1z"/>'
   };
 
   const socials = [
@@ -66,9 +72,9 @@
             <span>Recruiting: Saudi Arabia, UAE, Qatar, Kuwait, Oman, Bahrain • Visit Visas (Canada, Schengen, Turkey) • VIP Security</span>
           </div>
           <div class="topbar-contact">
-            <a href="tel:+254727557784" aria-label="Call Office">📞 <span>${PHONE_PRIMARY_FORMATTED} / ${PHONE_SECONDARY_FORMATTED}</span></a>
-            <a href="mailto:${EMAIL}" aria-label="Email Office">✉️ <span>${EMAIL}</span></a>
-            <span style="color:var(--gold-400)">📍 ${OFFICE_LOC}</span>
+            <a href="tel:+254784751253" aria-label="Call Office"><span class="icon-wrap">${contactIcons.phone}</span> <span>${PHONE_PRIMARY_FORMATTED} / ${PHONE_SECONDARY_FORMATTED}</span></a>
+            <a href="mailto:${EMAIL}" aria-label="Email Office"><span class="icon-wrap">${contactIcons.email}</span> <span>${EMAIL}</span></a>
+            <span class="location-wrap"><span class="icon-wrap">${contactIcons.location}</span> ${OFFICE_LOC}</span>
           </div>
         </div>
       </div>
@@ -106,10 +112,10 @@
         <div class="mobile-drawer-footer">
           <a class="btn btn-gold" href="contact.html">Apply for Jobs Abroad</a>
           <a class="btn btn-green" href="https://wa.me/${WA_NUM}?text=Hello%20The%20Moffats%2C%20I%20am%20ready%20to%20apply%20for%20a%20job%20abroad." target="_blank" rel="noopener">
-            💬 WhatsApp: ${PHONE_PRIMARY_FORMATTED}
+            WhatsApp: ${PHONE_PRIMARY_FORMATTED}
           </a>
           <div style="font-size:0.85rem; color:var(--mute); text-align:center; margin-top:0.5rem;">
-            📞 Call: <a href="tel:+254727557784" style="font-weight:700; color:var(--green-900);">${PHONE_PRIMARY_FORMATTED}</a> &bull; <a href="tel:+254740682321" style="font-weight:700; color:var(--green-900);">${PHONE_SECONDARY_FORMATTED}</a>
+            <span class="inline-icon">${contactIcons.phone}</span> Call: <a href="tel:+254784751253" style="font-weight:700; color:var(--green-900);">${PHONE_PRIMARY_FORMATTED}</a> &bull; <a href="tel:+254740682321" style="font-weight:700; color:var(--green-900);">${PHONE_SECONDARY_FORMATTED}</a>
           </div>
         </div>
       </div>
@@ -217,17 +223,17 @@
             <div>
               <h4>Nairobi Office</h4>
               <ul>
-                <li>📍 Nairobi, Kenya</li>
-                <li><a href="tel:+254727557784">📞 ${PHONE_PRIMARY_FORMATTED}</a></li>
-                <li><a href="tel:+254740682321">📞 ${PHONE_SECONDARY_FORMATTED}</a></li>
-                <li><a href="mailto:${EMAIL}">✉️ ${EMAIL}</a></li>
+                <li><span class="inline-icon">${contactIcons.location}</span> Nairobi, Kenya</li>
+                <li><a href="tel:+254784751253"><span class="inline-icon">${contactIcons.phone}</span> ${PHONE_PRIMARY_FORMATTED}</a></li>
+                <li><a href="tel:+254740682321"><span class="inline-icon">${contactIcons.phone}</span> ${PHONE_SECONDARY_FORMATTED}</a></li>
+                <li><a href="mailto:${EMAIL}"><span class="inline-icon">${contactIcons.email}</span> ${EMAIL}</a></li>
                 <li>
                   <a href="https://wa.me/${WA_NUM}?text=Hello%20The%20Moffats%2C%20I%20have%20an%20inquiry." target="_blank" rel="noopener" style="color:var(--gold-300); font-weight:700;">
-                    💬 Direct WhatsApp Helpline
+                    WhatsApp Helpline
                   </a>
                 </li>
                 <li style="margin-top:1rem; font-size:0.85rem; color:#8ea79a;">
-                  🕒 Mon – Fri: 8:00 AM – 5:30 PM<br>
+                  Mon – Fri: 8:00 AM – 5:30 PM<br>
                   Sat: 9:00 AM – 2:00 PM
                 </li>
               </ul>
@@ -252,7 +258,7 @@
         <a class="wa-btn" href="https://wa.me/${WA_NUM}?text=Hello%20The%20Moffats%2C%20I%20would%20like%20to%20inquire%20about%20your%20services." target="_blank" rel="noopener" aria-label="Chat on WhatsApp">
           <span class="wa-btn-pulse"></span>
           <svg viewBox="0 0 24 24">
-            <path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2c-1.5 0-2.9-.4-4.1-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1-1.5-.7-2.4-1.3-3.4-2.9-.3-.5.3-.5.8-1.5.1-.2 0-.3 0-.5l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.5.1-.7.3-.8.8-1 1.7-.7 2.7.4 1.2 1.1 2.2 2.1 3.2 1.8 1.8 3.1 2.3 4.2 2.7.8.2 1.5.2 2 .1.6-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.1-1.2-.1-.1-.3-.2-.5-.3z"/>
+            <path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2c-1.5 0-2.9-.4-4.1-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6 0l-.3.2c-.2.2-.6.7-.8.8-.2.1-.4.1-.7-.1-.9-.4-1.7-1-2.2-1.7-.2-.3-.4-.4-.7-.4H9c-.3 0-.7.1-.9.4-.4.4-.8 1-.8 1.7s.8 2 1 2.2c.2.4 2.2 3.5 5.4 4.8.8.4 1.5.6 2 .7.8.2 1.6.1 2.2-.1.5-.2 1.5-.7 1.7-1.4.2-.7.2-1.3.2-1.4-.1-.1-.3-.2-.5-.3z"/>
           </svg>
           <span>WhatsApp</span>
         </a>
@@ -426,7 +432,6 @@
     const button = item.querySelector('.faq-question');
     const container = item.closest('.faq-list') || item.parentElement;
 
-    // Close all other open FAQ items in the same container
     if (container) {
       container.querySelectorAll('.faq-item.open').forEach((openItem) => {
         if (openItem !== item) {
@@ -447,18 +452,16 @@
       item.classList.add('open');
       if (button) button.setAttribute('aria-expanded', 'true');
       if (answer) {
-        const targetHeight = Math.max(answer.scrollHeight + 40, 200);
-        answer.style.maxHeight = targetHeight + 'px';
+        const targetHeight = Math.max(answer.scrollHeight + 40, 220);
+        answer.style.maxHeight = `${targetHeight}px`;
       }
     }
   }
 
-  // Expose toggleFaq globally for instant HTML onclick support
   window.toggleFaq = function (el) {
     toggleFaqItem(el);
   };
 
-  // Attach event listener to all questions and items
   document.querySelectorAll('.faq-question').forEach((button) => {
     button.addEventListener('click', function (e) {
       e.preventDefault();
@@ -499,14 +502,13 @@
      -------------------------------------------------------------------------- */
   const contactForm = document.querySelector('form[action*="formsubmit.co"]');
   if (contactForm) {
-    // Add WhatsApp instant submit button if not already present
     const sendBtn = contactForm.querySelector('button[type="submit"]');
     if (sendBtn && !document.getElementById('wa-quick-send')) {
       const waActionDiv = document.createElement('div');
       waActionDiv.style.marginTop = '0.5rem';
       waActionDiv.innerHTML = `
         <button type="button" id="wa-quick-send" class="btn btn-gold" style="width:100%; justify-content:center;">
-          💬 Or Apply Directly via WhatsApp
+          WhatsApp Direct Application
         </button>
       `;
       sendBtn.insertAdjacentElement('afterend', waActionDiv);
